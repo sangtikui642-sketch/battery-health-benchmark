@@ -526,15 +526,17 @@ Failures were limited to intentionally absent release files, `0.1.0` metadata, a
 requested build flag. After the minimal release implementation, an explicit correction from
 `uv build --frozen` to frozen sync plus `uv build --no-sources`, and the user-approved source
 version correction, the version-fix run recorded `15 passed in 4.93s`. A final rerun after the
-evidence documents were synchronized recorded `15 passed in 7.20s`.
+evidence documents were synchronized recorded `15 passed in 7.20s`. The final CI portability
+correction recorded `15 passed in 4.61s` and an exact-workflow full run of
+`158 passed in 395.30s`.
 
 ### Quantitative evidence
 
 ```text
 Release BDD: 4 passed
 Release contract tests: 11 passed
-Focused total: 15 passed in 7.20s
-Full repository: 158 passed in 349.35s
+Focused total: 15 passed in 4.61s
+Full repository: 158 passed in 395.30s
 Executable BDD total: 47
 Skipped: 0
 Xfailed: 0
@@ -552,8 +554,11 @@ claims.
 
 ### Known limitations and unsupported claims
 
-- GitHub CI is statically validated but cannot be called successful until the reviewed worktree is
-  committed, pushed, and both hosted matrix jobs are observed.
+- The first hosted CI run (`33339051515`) exposed that a cache-nested basetemp was not creatable
+  from a fresh checkout. A root-level attempt then proved temporary test output must also remain
+  outside repository safety discovery. The final BDD/unit contract uses the ignored, guaranteed
+  `.venv/release_readiness_ci` parent, but hosted success cannot be claimed until the corrective
+  commit passes both matrix jobs.
 - GitHub Private Vulnerability Reporting is the documented mechanism, but its repository setting
   still requires an authorized maintainer to enable and verify it.
 - Installed dependency metadata and the Hatchling upstream declaration show permissive licenses;

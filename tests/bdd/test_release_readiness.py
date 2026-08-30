@@ -68,12 +68,14 @@ def ci_has_required_commands(release_context: dict[str, Any]) -> None:
     required = (
         "uv sync --frozen",
         "--cov-fail-under=85",
+        "--basetemp .venv/release_readiness_ci",
         "ruff check .",
         "ruff format --check .",
         "mypy src/battery_health",
         "uv build --no-sources",
     )
     assert all(command in ci for command in required)
+    assert ".pytest_cache/release_readiness_ci" not in ci
     action_lines = [line.strip() for line in ci.splitlines() if line.strip().startswith("uses:")]
     assert action_lines
     assert all(
@@ -135,8 +137,8 @@ def security_and_release_authorization_are_explicit(
     assert "Do not report vulnerabilities in public issues" in security
     assert "Local verification" in checklist
     assert "External actions requiring authorization" in checklist
-    assert re.search(r"(?m)^- \[ \] git commit", checklist)
-    assert re.search(r"(?m)^- \[ \] git push", checklist)
+    assert re.search(r"(?mi)^- \[x\] git commit", checklist)
+    assert re.search(r"(?mi)^- \[x\] git push", checklist)
     assert re.search(r"(?m)^- \[ \] git tag", checklist)
     assert re.search(r"(?m)^- \[ \] GitHub Release", checklist)
 

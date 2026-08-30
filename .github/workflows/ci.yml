@@ -39,7 +39,7 @@ jobs:
         run: >-
           uv run --frozen pytest -q --cov=battery_health
           --cov-report=term-missing --cov-fail-under=85
-          --basetemp .pytest_cache/release_readiness_ci
+          --basetemp .venv/release_readiness_ci
 
       - name: Run Ruff lint
         run: uv run --frozen ruff check .

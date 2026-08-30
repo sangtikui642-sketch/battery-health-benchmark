@@ -48,8 +48,9 @@ standards-compliant publishable metadata without workspace source overrides.
 
 Recorded local evidence:
 
-- focused release suite after evidence synchronization: `15 passed in 7.20s`;
-- full repository: `158 passed in 349.35s`, 47 executable BDD tests, no skipped or xfailed tests;
+- focused release suite after the CI regression correction: `15 passed in 4.61s`;
+- exact corrected CI test command: `158 passed in 395.30s`, 47 executable BDD tests, no skipped
+  or xfailed tests;
 - package coverage: `87.76%` against the unchanged 85% gate;
 - Ruff: all checks passed and 60 files formatted;
 - strict mypy: no issues in 20 source files;
@@ -73,27 +74,26 @@ uv GitHub Actions integration documentation. Dependabot is limited to the `uv` a
 
 ## External actions requiring authorization
 
-None of the following actions is performed by local release-candidate verification:
+External release state after the first authorized push:
 
-- [ ] git commit: review and commit the complete release-candidate change set.
-- [ ] git push: push the reviewed commit and allow GitHub-hosted CI to run.
+- [x] git commit: reviewed candidate committed as `619a6b2`.
+- [x] git push: `619a6b2` pushed to `origin/main`.
+- [ ] hosted CI: initial run `33339051515` exposed the fresh-runner basetemp defect; corrective
+  commit and green matrix rerun are still required.
 - [ ] git tag: create annotated tag `v0.2.0rc1` only after both CI matrix jobs pass.
 - [ ] GitHub Release: publish the tag, changelog excerpt, wheel, and source archive.
 - [ ] PyPI: publish distributions only after a separate credential and publication decision.
 - [ ] Enable GitHub Private Vulnerability Reporting and verify the confidential report link.
 
-Candidate commands for an authorized maintainer to review later are:
+Remaining candidate commands for an authorized maintainer are:
 
 ```powershell
-git add LICENSE pyproject.toml uv.lock .github CHANGELOG.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md CITATION.cff docs features tests README.md
-git commit -m "chore: prepare v0.2.0rc1 release candidate"
-git push origin main
 git tag -a v0.2.0rc1 -m "Battery Health AutoBench v0.2.0rc1"
 git push origin v0.2.0rc1
 gh release create v0.2.0rc1 dist\*.whl dist\*.tar.gz --title "Battery Health AutoBench v0.2.0rc1" --notes-file CHANGELOG.md
 uv publish dist\*
 ```
 
-The commands above are documentation, not an execution record. A maintainer must review artifact
-contents, confirm repository settings, observe GitHub CI results, and explicitly authorize each
-external state change.
+The remaining commands above are documentation, not an execution record. The failed hosted run is
+retained as evidence; tag and release creation remain blocked until the corrective commit passes
+both GitHub matrix jobs.

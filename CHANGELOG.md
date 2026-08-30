@@ -24,6 +24,8 @@ No changes have been recorded after the local `0.2.0rc1` release candidate.
 - Advanced the package version from `0.1.0` to `0.2.0rc1`.
 - Declared the public project identity, repository URLs, typed-package classifier, and license
   files in Python package metadata.
+- Corrected the CI basetemp to use the ignored uv environment created on fresh Windows and Ubuntu
+  runners, with a regression contract preserving creation and repository-safety requirements.
 
 ### Security
 
@@ -35,5 +37,6 @@ No changes have been recorded after the local `0.2.0rc1` release candidate.
 
 - The executable acceptance workflow uses synthetic battery data and does not establish real-world
   accuracy, BMS readiness, or safety certification.
-- GitHub-hosted CI, a Git tag, a GitHub Release, and PyPI publication are not claimed by this local
-  candidate and require separate authorization.
+- The first GitHub-hosted run exposed and retained evidence for a fresh-runner basetemp defect; a
+  green corrective matrix run, Git tag, GitHub Release, and optional PyPI publication remain
+  required before broader release claims.

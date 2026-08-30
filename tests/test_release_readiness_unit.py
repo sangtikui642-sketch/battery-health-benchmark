@@ -87,12 +87,14 @@ def test_ci_enforces_every_local_quality_and_build_command() -> None:
         "--cov=battery_health",
         "--cov-report=term-missing",
         "--cov-fail-under=85",
+        "--basetemp .venv/release_readiness_ci",
         "uv run --frozen ruff check .",
         "uv run --frozen ruff format --check .",
         "uv run --frozen mypy src/battery_health",
         "uv build --no-sources",
     ):
         assert command in ci
+    assert ".pytest_cache/release_readiness_ci" not in ci
 
 
 def test_ci_has_read_only_permissions_and_no_publish_or_secret_path() -> None:
@@ -141,12 +143,15 @@ def test_security_policy_uses_private_vulnerability_reporting() -> None:
     assert "No security email address is published for this release" in security
 
 
-def test_release_checklist_keeps_external_actions_unexecuted() -> None:
+def test_release_checklist_records_completed_and_pending_external_actions() -> None:
     checklist = _read("docs/RELEASE_CHECKLIST.md")
     assert "## Local verification" in checklist
     assert "## External actions requiring authorization" in checklist
     external = checklist.split("## External actions requiring authorization", maxsplit=1)[1]
-    for action in ("git commit", "git push", "git tag", "GitHub Release", "PyPI"):
+    for action in ("git commit", "git push"):
+        assert re.search(rf"(?mi)^- \[x\] {re.escape(action)}", external)
+        assert re.search(rf"(?m)^- \[ \] {re.escape(action)}", external) is None
+    for action in ("git tag", "GitHub Release", "PyPI"):
         assert re.search(rf"(?m)^- \[ \] {re.escape(action)}", external)
         assert re.search(rf"(?m)^- \[x\] {re.escape(action)}", external, re.IGNORECASE) is None
 

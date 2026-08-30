@@ -353,7 +353,7 @@ git diff --check
 
 Recorded local results:
 
-- 158 tests passed in 349.35 seconds, including 47 executable BDD tests;
+- 158 tests passed in 395.30 seconds with the final CI basetemp, including 47 executable BDD tests;
 - zero skipped and zero xfailed tests;
 - package coverage was 87.76%, above the unchanged 85% gate;
 - Ruff lint passed and all 60 files were formatted;
@@ -366,5 +366,29 @@ Recorded local results:
 - `dist/` contained zero tracked files and `uv.lock` changed only the root package version;
 - `git diff --check` exited 0 with Windows line-ending conversion warnings only.
 
-No commit, push, tag, GitHub-hosted CI result, GitHub Release, Private Vulnerability Reporting
-setting change, or PyPI publication was performed or claimed.
+## First hosted CI execution and basetemp regression
+
+The reviewed candidate was committed as `619a6b2` and pushed to `main`. GitHub Actions run
+`33339051515` executed both matrix jobs, and both failed in the test step before meaningful test
+execution. The fresh runners did not contain the parent `.pytest_cache` directory required by the
+configured `.pytest_cache/release_readiness_ci` basetemp. The local worktree had contained that
+cache directory, so the earlier local gate did not expose the portability defect.
+
+The existing release-gate scenario and unit contract were strengthened before the CI change to
+reject the missing cache parent. Recorded regression Red result: exit code 1,
+`2 failed, 13 passed in 7.71s`. A first root-level correction passed the focused suite but polluted
+repository safety discovery during the exact full CI command; that full run retained a second Red
+result of `5 failed, 153 passed in 370.51s`. Three failures proved the root temp tree was visible to
+the safety scanner, while two proved the release-state contract still described commit and push as
+unexecuted. The final workflow uses `--basetemp .venv/release_readiness_ci`: `uv sync --frozen`
+guarantees the parent and `.gitignore` excludes the environment from repository safety discovery.
+The release-state contracts now record commit/push as completed while keeping tag, GitHub Release,
+PyPI, and Private Vulnerability Reporting pending.
+
+Final local corrective evidence: the focused release suite recorded `15 passed in 4.61s`; the
+exact test command from the corrected workflow recorded `158 passed in 395.30s` with 87.76%
+coverage, zero skipped tests, and zero xfailed tests.
+
+The failed hosted run is retained as evidence. A hosted rerun on the corrective commit remains
+required before a tag or GitHub Release can be created. No tag, GitHub Release, Private
+Vulnerability Reporting setting change, or PyPI publication has been performed or claimed.
