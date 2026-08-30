@@ -2,9 +2,9 @@
 
 A behavior-driven, reproducible benchmark for battery state-of-health prediction.
 
-> Local release status: `v0.2.0rc1` open-source release candidate under the MIT License. The
-> repository contains local verification evidence; GitHub-hosted CI, a Git tag, a GitHub Release,
-> and PyPI publication are not claimed until separately authorized and observed.
+> Release status: public `v0.2.0rc1` open-source release candidate under the MIT License. Local
+> verification and Windows/Ubuntu GitHub-hosted CI are green, and Private Vulnerability Reporting
+> is enabled. A Git tag, GitHub Release, and PyPI publication are not claimed until observed.
 
 Release governance is documented in [CHANGELOG.md](CHANGELOG.md),
 [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md),

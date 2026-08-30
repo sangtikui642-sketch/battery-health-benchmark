@@ -1,7 +1,7 @@
 # v0.2.0rc1 Release Checklist
 
-Status: local release-candidate verification completed on 2026-08-31; external release actions
-remain unauthorized and unexecuted.
+Status: public release-candidate verification completed on 2026-08-31; tag and GitHub Release
+remain pending at this checkpoint.
 
 Release identity:
 
@@ -78,12 +78,13 @@ External release state after the first authorized push:
 
 - [x] git commit: reviewed candidate committed as `619a6b2`.
 - [x] git push: `619a6b2` pushed to `origin/main`.
-- [ ] hosted CI: initial run `33339051515` exposed the fresh-runner basetemp defect; corrective
-  commit and green matrix rerun are still required.
+- [x] hosted CI: corrective run `33339984774` passed Ubuntu in 4m14s and Windows in 8m24s; failed
+  run `33339051515` remains retained as regression evidence.
+- [x] repository visibility: verified `PUBLIC` through the GitHub API.
 - [ ] git tag: create annotated tag `v0.2.0rc1` only after both CI matrix jobs pass.
 - [ ] GitHub Release: publish the tag, changelog excerpt, wheel, and source archive.
 - [ ] PyPI: publish distributions only after a separate credential and publication decision.
-- [ ] Enable GitHub Private Vulnerability Reporting and verify the confidential report link.
+- [x] Enable GitHub Private Vulnerability Reporting; API verification returned `enabled: true`.
 
 Remaining candidate commands for an authorized maintainer are:
 
@@ -95,5 +96,5 @@ uv publish dist\*
 ```
 
 The remaining commands above are documentation, not an execution record. The failed hosted run is
-retained as evidence; tag and release creation remain blocked until the corrective commit passes
-both GitHub matrix jobs.
+retained as evidence and the corrective matrix is green. Tag and release creation remain pending
+until this final evidence update itself passes CI.

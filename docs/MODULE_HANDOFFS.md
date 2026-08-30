@@ -498,8 +498,10 @@ Inputs are the verified FR-13 worktree, user-confirmed MIT identity, existing `p
 - four release-readiness BDD scenarios and eleven focused contracts;
 - one typed wheel and one source distribution in ignored `dist/`.
 
-The module does not commit, push, tag, enable repository settings, execute GitHub-hosted runners,
-create a GitHub Release, or publish to PyPI.
+The local module itself does not mutate GitHub state. Subsequent explicitly authorized release
+orchestration committed and pushed the candidate, made the repository public, enabled Private
+Vulnerability Reporting, and observed the hosted matrix. Tag, GitHub Release, and PyPI remain
+outside this evidence checkpoint.
 
 ### Core contracts and engineering techniques
 
@@ -557,10 +559,8 @@ claims.
 - The first hosted CI run (`33339051515`) exposed that a cache-nested basetemp was not creatable
   from a fresh checkout. A root-level attempt then proved temporary test output must also remain
   outside repository safety discovery. The final BDD/unit contract uses the ignored, guaranteed
-  `.venv/release_readiness_ci` parent, but hosted success cannot be claimed until the corrective
-  commit passes both matrix jobs.
-- GitHub Private Vulnerability Reporting is the documented mechanism, but its repository setting
-  still requires an authorized maintainer to enable and verify it.
+  `.venv/release_readiness_ci` parent; corrective run `33339984774` passed both matrix jobs.
+- GitHub Private Vulnerability Reporting is enabled and API-verified for the public repository.
 - Installed dependency metadata and the Hatchling upstream declaration show permissive licenses;
   this mechanical review is not legal advice and does not relicense datasets, models, or weights.
 - Python 3.12 is the only declared and tested interpreter line for this candidate.

@@ -383,12 +383,13 @@ the safety scanner, while two proved the release-state contract still described 
 unexecuted. The final workflow uses `--basetemp .venv/release_readiness_ci`: `uv sync --frozen`
 guarantees the parent and `.gitignore` excludes the environment from repository safety discovery.
 The release-state contracts now record commit/push as completed while keeping tag, GitHub Release,
-PyPI, and Private Vulnerability Reporting pending.
+and PyPI pending.
 
 Final local corrective evidence: the focused release suite recorded `15 passed in 4.61s`; the
 exact test command from the corrected workflow recorded `158 passed in 395.30s` with 87.76%
 coverage, zero skipped tests, and zero xfailed tests.
 
-The failed hosted run is retained as evidence. A hosted rerun on the corrective commit remains
-required before a tag or GitHub Release can be created. No tag, GitHub Release, Private
-Vulnerability Reporting setting change, or PyPI publication has been performed or claimed.
+The failed hosted run is retained as evidence. Corrective run `33339984774` passed every test,
+coverage, Ruff, format, mypy, and build step on Ubuntu in 4m14s and Windows in 8m24s. The repository
+was then verified public, and the Private Vulnerability Reporting API returned `enabled: true`.
+No tag, GitHub Release, or PyPI publication had been performed at this evidence checkpoint.

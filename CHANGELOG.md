@@ -30,13 +30,14 @@ No changes have been recorded after the local `0.2.0rc1` release candidate.
 ### Security
 
 - Limited CI permissions to read-only repository contents and prohibited publishing credentials.
-- Selected GitHub Private Vulnerability Reporting as the confidential reporting mechanism.
+- Enabled and API-verified GitHub Private Vulnerability Reporting as the confidential reporting
+  mechanism for the public repository.
 - Pinned every GitHub Action reference to a reviewed full commit SHA.
 
 ### Limitations
 
 - The executable acceptance workflow uses synthetic battery data and does not establish real-world
   accuracy, BMS readiness, or safety certification.
-- The first GitHub-hosted run exposed and retained evidence for a fresh-runner basetemp defect; a
-  green corrective matrix run, Git tag, GitHub Release, and optional PyPI publication remain
-  required before broader release claims.
+- The first GitHub-hosted run exposed and retained evidence for a fresh-runner basetemp defect;
+  corrective run `33339984774` passed Ubuntu and Windows. The Git tag, GitHub Release, and optional
+  PyPI publication remain separate release states.

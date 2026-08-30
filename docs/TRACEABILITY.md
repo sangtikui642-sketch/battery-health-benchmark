@@ -60,16 +60,17 @@ implemented` is deliberately not treated as completion.
 
 | ID | Atomic requirement | Gherkin scenario | Executable test | Release entry | Evidence | Status |
 |---|---|---|---|---|---|---|
-| REL-01 | Run CI on push and pull requests | Enforce release gates on Windows and Ubuntu | `test_enforce_release_gates_on_windows_and_ubuntu` | `.github/workflows/ci.yml` | trigger contract | complete locally |
-| REL-02 | Cover Windows, Ubuntu, and Python 3.12 | Enforce release gates on Windows and Ubuntu | CI matrix BDD and unit assertions | CI matrix | `windows-latest`, `ubuntu-latest`, `3.12` | complete locally |
-| REL-03 | Enforce frozen sync, tests, quality, typing, and build | Enforce release gates on Windows and Ubuntu | command contract assertions | CI steps | local command summaries | complete locally |
+| REL-01 | Run CI on push and pull requests | Enforce release gates on Windows and Ubuntu | `test_enforce_release_gates_on_windows_and_ubuntu` | `.github/workflows/ci.yml` | hosted run `33339984774` | complete hosted |
+| REL-02 | Cover Windows, Ubuntu, and Python 3.12 | Enforce release gates on Windows and Ubuntu | CI matrix BDD and unit assertions | CI matrix | Ubuntu 4m14s; Windows 8m24s | complete hosted |
+| REL-03 | Enforce frozen sync, tests, quality, typing, and build | Enforce release gates on Windows and Ubuntu | command contract assertions | CI steps | all hosted steps green | complete hosted |
 | REL-04 | Keep source/package version, license, author, URL, and citation consistent | Keep release metadata consistent | metadata BDD and three unit contracts | `src/battery_health/__init__.py`; `pyproject.toml`; `LICENSE`; `CITATION.cff`; `uv.lock` | CLI and wheel metadata | complete |
 | REL-05 | Publish governance documents without placeholders | Publish complete open-source governance files | governance BDD and placeholder contract | five governance documents | document inventory | complete |
-| REL-06 | Use confidential security reporting | Publish complete open-source governance files | private-reporting assertions | `SECURITY.md` | advisory URL and policy | configured locally; GitHub setting pending |
-| REL-07 | Keep external release actions unauthorized | Publish complete open-source governance files | safe-checklist assertions | `docs/RELEASE_CHECKLIST.md` | unchecked external-action list | complete |
+| REL-06 | Use confidential security reporting | Publish complete open-source governance files | private-reporting assertions | `SECURITY.md` | API returned `enabled: true` | complete hosted |
+| REL-07 | Keep external release actions explicitly authorized and state-tracked | Publish complete open-source governance files | release-state assertions | `docs/RELEASE_CHECKLIST.md` | completed and pending action list | complete |
 | REL-08 | Build one typed wheel and one sdist | Build artifacts and expose the CLI release surface | archive-inspection BDD | `uv build --no-sources` | versioned archives and content audit | complete locally |
 | REL-09 | Preserve CLI version, root help, and agent help | Build artifacts and expose the CLI release surface | Typer version/help assertions | `battery-health`; `battery-health agent` | `0.2.0rc1` and exit 0 help output | complete locally |
-| REL-10 | Keep dependency and Action updates bounded | Enforce release gates on Windows and Ubuntu | pinned-action and Dependabot contracts | `.github/dependabot.yml`; CI action refs | exact ecosystems and SHAs | complete locally |
+| REL-10 | Keep dependency and Action updates bounded | Enforce release gates on Windows and Ubuntu | pinned-action and Dependabot contracts | `.github/dependabot.yml`; CI action refs | exact ecosystems, SHAs, and hosted run | complete hosted |
 
-`complete locally` does not mean GitHub-hosted CI has run. Commit, push, tag, GitHub Release, and
-PyPI state remain outside this evidence and require explicit authorization.
+`complete hosted` means the requirement was observed in GitHub Actions run `33339984774` or through
+the named repository API. Tag, GitHub Release, and PyPI remain separate explicitly authorized
+release states.
