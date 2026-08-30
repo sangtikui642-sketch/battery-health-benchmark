@@ -1,0 +1,35 @@
+{
+  "allowed_accelerators": [
+    "cpu"
+  ],
+  "allowed_code_licenses": [
+    "BSD-3-Clause"
+  ],
+  "allowed_dependencies": [
+    "scikit-learn"
+  ],
+  "allowed_serialization_formats": [
+    "none",
+    "joblib"
+  ],
+  "allowed_weight_licenses": [
+    "not_applicable"
+  ],
+  "approved_execution_adapters": [
+    "builtin:battery_health.modeling.baselines"
+  ],
+  "feature_contract": [
+    {
+      "name": "cycle_index",
+      "unit": "dimensionless cycle index"
+    }
+  ],
+  "max_memory_mb": 1024,
+  "max_search_trials": 8,
+  "require_determinism": true,
+  "require_prediction": true,
+  "require_training": true,
+  "schema_version": 1,
+  "serialization_required": false,
+  "target": "soh"
+}

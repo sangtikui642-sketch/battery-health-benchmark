@@ -1,0 +1,17 @@
+cff-version: "1.2.0"
+message: "If you use Battery Health AutoBench, please cite this software."
+type: software
+title: "Battery Health AutoBench"
+version: "0.2.0rc1"
+date-released: "2026-08-31"
+license: "MIT"
+authors:
+  - family-names: "赵"
+    given-names: "一冰"
+    alias: "sangtikui642-sketch"
+repository-code: "https://github.com/sangtikui642-sketch/battery-health-benchmark"
+url: "https://github.com/sangtikui642-sketch/battery-health-benchmark"
+abstract: >-
+  A behavior-driven, reproducible command-line benchmark and deterministic
+  experiment agent for battery state-of-health modelling, validation,
+  evidence reporting, and model-plugin governance.

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "target": "soh",
+  "dataset": {
+    "kind": "synthetic",
+    "random_seed": 2026,
+    "cell_count": 12,
+    "cycles_per_cell": 8,
+    "reference_capacity_ah": 2.0
+  },
+  "field_mapping": {
+    "cell_id": "cell",
+    "cycle_index": "cycle",
+    "capacity_ah": "capacity"
+  },
+  "split": {
+    "random_seed": 2026,
+    "train_fraction": 0.6,
+    "validation_fraction": 0.2
+  },
+  "feature_columns": [
+    "cycle_index"
+  ],
+  "feature_units": {
+    "cycle_index": "dimensionless cycle index"
+  },
+  "models": [
+    "linear_regression",
+    "random_forest",
+    "histogram_gradient_boosting"
+  ],
+  "model_random_seed": 73,
+  "deterministic_tolerance": 1e-12
+}

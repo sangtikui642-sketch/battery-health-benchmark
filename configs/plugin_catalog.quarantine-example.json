@@ -1,0 +1,52 @@
+{
+  "plugins": [
+    {
+      "capabilities": {
+        "prediction": true,
+        "training": true
+      },
+      "determinism": {
+        "same_seed_reproducible": true,
+        "seed_parameter": "random_seed",
+        "supported": true
+      },
+      "execution": {
+        "adapter": "python:external_research_model",
+        "default_enabled": false
+      },
+      "implementation_version": "0.0.0-reference",
+      "licenses": {},
+      "plugin_id": "external_research_model",
+      "preprocessing_policy": "Fit declared preprocessing on the train partition only",
+      "required_features": [
+        {
+          "name": "cycle_index",
+          "unit": "dimensionless cycle index"
+        }
+      ],
+      "requirements": {
+        "accelerator": "cpu",
+        "dependencies": [],
+        "minimum_memory_mb": 128
+      },
+      "search_space": {
+        "max_trials": 1,
+        "parameters": {},
+        "strategy": "grid"
+      },
+      "serialization": {
+        "artifact_extension": null,
+        "format": "none",
+        "load_supported": false,
+        "save_supported": false
+      },
+      "supported_target": "soh",
+      "upstream": {
+        "citation": "Replace with a reviewed paper or software citation",
+        "repository_url": "https://example.invalid/external-research-model",
+        "source": "external research reference only"
+      }
+    }
+  ],
+  "schema_version": 1
+}

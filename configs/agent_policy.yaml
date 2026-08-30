@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "selection": {
+    "metric": "mae",
+    "direction": "minimize",
+    "tie_breakers": [
+      "rmse",
+      "plugin_id_lexicographic"
+    ]
+  },
+  "required_metrics": [
+    "mae",
+    "rmse",
+    "mape",
+    "r_squared"
+  ],
+  "validation_gates": [
+    "cell_partitions_disjoint",
+    "train_only_preprocessing",
+    "finite_complete_predictions",
+    "configured_soh_bounds",
+    "required_metrics_present",
+    "resource_budget_respected",
+    "known_licenses"
+  ],
+  "soh_bounds": {
+    "minimum": 0.0,
+    "maximum": 1.2
+  },
+  "budget": {
+    "max_candidates": 3,
+    "max_runtime_seconds_per_candidate": 120,
+    "max_total_runtime_seconds": 360,
+    "max_memory_mb_per_candidate": 1024
+  },
+  "uncertainty": {
+    "method": "bootstrap_by_cell",
+    "confidence_level": 0.95,
+    "resamples": 1000,
+    "random_seed": 73
+  },
+  "random_seeds": [
+    73
+  ],
+  "deterministic_required": true,
+  "deterministic_tolerance": 1e-12
+}
