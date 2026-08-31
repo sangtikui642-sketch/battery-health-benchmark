@@ -5,7 +5,18 @@ the Keep a Changelog structure and uses Python packaging version identifiers.
 
 ## Unreleased
 
-No changes have been recorded after the local `0.2.0rc1` release candidate.
+### Added
+
+- FR-14 MATR MATLAB v7.3/HDF5 adapter with fail-closed two-level object-reference parsing,
+  deterministic normalized cycle output, portable provenance, SHA-256 verification, atomic
+  publication, and a root `import-matr` CLI command.
+- Eight executable FR-14 BDD scenarios, focused boundary contracts, and local-only MATR source and
+  usage documentation.
+
+### Changed
+
+- Added and locked `h5py` for the verified MATLAB v7.3/HDF5 boundary.
+- Renumbered the deferred optional evidence-grounded LLM advisor from FR-14 to FR-15.
 
 ## 0.2.0rc1 - 2026-08-31
 
@@ -39,5 +50,5 @@ No changes have been recorded after the local `0.2.0rc1` release candidate.
 - The executable acceptance workflow uses synthetic battery data and does not establish real-world
   accuracy, BMS readiness, or safety certification.
 - The first GitHub-hosted run exposed and retained evidence for a fresh-runner basetemp defect;
-  corrective run `33339984774` passed Ubuntu and Windows. The Git tag, GitHub Release, and optional
-  PyPI publication remain separate release states.
+  corrective run `33339984774` passed Ubuntu and Windows. The annotated tag and GitHub pre-release
+  were subsequently published; optional PyPI publication remains a separate release state.

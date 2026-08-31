@@ -168,7 +168,7 @@ An incompatible plugin shall be rejected before training. A plugin with unknown 
 license status may be documented as an external research reference, but its code or weights shall
 not be bundled, executed by default, or represented as approved for redistribution.
 
-### FR-14 Optional evidence-grounded advisor
+### FR-15 Optional evidence-grounded advisor
 
 The optional advisor may summarize results, explain failed gates, and propose a new draft plan. It
 shall receive sanitized manifests and aggregate evidence rather than unrestricted filesystem
@@ -234,8 +234,9 @@ milestone.
 | FR-09 | `features/agent_planning.feature` |
 | FR-10 | `features/agent_execution.feature` |
 | FR-11 | `features/agent_validation.feature` |
-| FR-12, FR-14 | `features/agent_reporting.feature` |
+| FR-12, FR-15 | `features/agent_reporting.feature` |
 | FR-13 | `features/model_plugin_governance.feature` |
+| FR-14 | `features/matr_data_import.feature` |
 
 ## 10. Delivery sequence
 
@@ -245,7 +246,8 @@ milestone.
 4. Implement FR-11 validation-only selection followed by one locked final test.
 5. Implement FR-12 evidence manifests and comparison reports.
 6. Implement FR-13 plugin manifests and license policy.
-7. Add FR-14 only after the deterministic agent passes all acceptance checks.
+7. Add the FR-14 real-data adapter after the deterministic agent passes all acceptance checks.
+8. Add the optional FR-15 advisor only after deterministic evidence remains authoritative.
 
 ## 11. Definition of done for AutoBench v0.2
 

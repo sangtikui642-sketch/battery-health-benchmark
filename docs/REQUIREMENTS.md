@@ -87,6 +87,46 @@ tolerance.
 Repository checks shall reject credentials and disallowed raw-data locations. Tests shall use
 anonymous, reproducible fixtures rather than company or personal data.
 
+### FR-14 MATR real-data import
+
+FR-14 shall import a user-supplied, public-access MATR MATLAB v7.3/HDF5 batch into the
+normalized cycle schema without loading or redistributing raw measurements beyond the requested
+local processing run. It is a data-adapter requirement, not the language-model advisor previously
+deferred under this number; that advisor is renumbered to FR-15.
+
+Atomic requirements:
+
+- **FR14-01 Source contract:** the caller shall provide a source URL, acquisition date, batch ID,
+  and an explicit usage-terms status. The adapter shall not infer legal permission.
+- **FR14-02 Format contract:** the input shall be HDF5 with a top-level `batch` group and a
+  `batch/summary` reference array. Unknown or ambiguous layouts shall fail closed.
+- **FR14-03 Field contract:** each referenced summary shall contain `cycle` and `QDischarge`
+  numeric vectors with equal non-zero lengths. The two reviewed upstream layouts store those
+  vectors either directly or behind one object reference; the manifest shall record which layout
+  was observed, and mixed or unknown layouts shall fail closed.
+- **FR14-04 Identity contract:** normalized `cell_id` values shall be stable `<batch_id>c<index>`
+  strings and cycle indices shall come from the source vector without renumbering.
+- **FR14-05 Unit contract:** `QDischarge` shall map to `capacity_ah` in ampere-hours; identifiers
+  and cycle indices are dimensionless. The mapping, types, and units shall be retained.
+- **FR14-06 Value contract:** cycle indices shall be finite positive integers and capacities shall
+  be finite positive numbers. Duplicate `(cell_id, cycle_index)` pairs shall be rejected.
+- **FR14-07 Determinism:** rows shall be sorted by cell and cycle, canonical JSON shall use stable
+  ordering, and identical bytes plus metadata shall produce identical output hashes.
+- **FR14-08 Provenance:** `source_manifest.json` shall record the source identity, original file
+  name and size, input SHA-256, acquisition date, usage status, observed HDF5 contract, field
+  mappings, row/cell/cycle counts, and output SHA-256 values.
+- **FR14-09 Portable evidence:** committed files and generated manifests shall contain no local
+  absolute path. Raw and normalized data shall remain in ignored locations.
+- **FR14-10 Atomic failure:** the adapter shall validate before publishing output and shall leave
+  no partial output directory after a failed import.
+- **FR14-11 CLI contract:** a Typer command shall expose the adapter, return zero for a successful
+  import, and return non-zero with an actionable error for an invalid input.
+- **FR14-12 Scientific boundary:** import statistics are data-integrity evidence, not SOH accuracy,
+  model generalization, redistribution approval, or production-BMS evidence.
+
+FR-14 does not implement RUL, model training, model selection, a language-model advisor, a web
+service, or embedded deployment.
+
 ## 6. Non-functional requirements
 
 | ID | Requirement | Acceptance evidence |
@@ -127,6 +167,7 @@ anonymous, reproducible fixtures rather than company or personal data.
 | FR-06 | `features/evaluation.feature` |
 | FR-07 | `features/reproducibility.feature` |
 | FR-08 | `features/data_protection.feature` |
+| FR-14 | `features/matr_data_import.feature` |
 
 ## 9. Definition of done for one behavior
 

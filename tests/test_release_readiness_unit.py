@@ -143,15 +143,15 @@ def test_security_policy_uses_private_vulnerability_reporting() -> None:
     assert "No security email address is published for this release" in security
 
 
-def test_release_checklist_records_completed_and_pending_external_actions() -> None:
+def test_release_checklist_records_observed_and_pending_external_actions() -> None:
     checklist = _read("docs/RELEASE_CHECKLIST.md")
     assert "## Local verification" in checklist
     assert "## External actions requiring authorization" in checklist
     external = checklist.split("## External actions requiring authorization", maxsplit=1)[1]
-    for action in ("git commit", "git push"):
+    for action in ("git commit", "git push", "git tag", "GitHub Release"):
         assert re.search(rf"(?mi)^- \[x\] {re.escape(action)}", external)
         assert re.search(rf"(?m)^- \[ \] {re.escape(action)}", external) is None
-    for action in ("git tag", "GitHub Release", "PyPI"):
+    for action in ("PyPI",):
         assert re.search(rf"(?m)^- \[ \] {re.escape(action)}", external)
         assert re.search(rf"(?m)^- \[x\] {re.escape(action)}", external, re.IGNORECASE) is None
 

@@ -1,7 +1,7 @@
 # v0.2.0rc1 Release Checklist
 
-Status: public release-candidate verification completed on 2026-08-31; tag and GitHub Release
-remain pending at this checkpoint.
+Status: public release-candidate verification completed on 2026-08-31; annotated tag and GitHub
+pre-release were subsequently published. PyPI remains unexecuted.
 
 Release identity:
 
@@ -81,20 +81,20 @@ External release state after the first authorized push:
 - [x] hosted CI: corrective run `33339984774` passed Ubuntu in 4m14s and Windows in 8m24s; failed
   run `33339051515` remains retained as regression evidence.
 - [x] repository visibility: verified `PUBLIC` through the GitHub API.
-- [ ] git tag: create annotated tag `v0.2.0rc1` only after both CI matrix jobs pass.
-- [ ] GitHub Release: publish the tag, changelog excerpt, wheel, and source archive.
+- [x] git tag: annotated `v0.2.0rc1` points to commit `1434f97`.
+- [x] GitHub Release: `v0.2.0rc1` pre-release published with one wheel and one source archive.
 - [ ] PyPI: publish distributions only after a separate credential and publication decision.
 - [x] Enable GitHub Private Vulnerability Reporting; API verification returned `enabled: true`.
 
-Remaining candidate commands for an authorized maintainer are:
+The only remaining publication command for an authorized maintainer is:
 
 ```powershell
-git tag -a v0.2.0rc1 -m "Battery Health AutoBench v0.2.0rc1"
-git push origin v0.2.0rc1
-gh release create v0.2.0rc1 dist\*.whl dist\*.tar.gz --title "Battery Health AutoBench v0.2.0rc1" --notes-file CHANGELOG.md
 uv publish dist\*
 ```
 
-The remaining commands above are documentation, not an execution record. The failed hosted run is
-retained as evidence and the corrective matrix is green. Tag and release creation remain pending
-until this final evidence update itself passes CI.
+The remaining command above is documentation, not an execution record. The failed hosted run is
+retained as evidence and the corrective matrix is green. Read-only GitHub verification observed a
+non-draft pre-release at
+`https://github.com/sangtikui642-sketch/battery-health-benchmark/releases/tag/v0.2.0rc1` with
+`battery_health_benchmark-0.2.0rc1-py3-none-any.whl` and
+`battery_health_benchmark-0.2.0rc1.tar.gz` assets.

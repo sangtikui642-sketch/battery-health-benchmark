@@ -4,15 +4,16 @@ A behavior-driven, reproducible benchmark for battery state-of-health prediction
 
 > Release status: public `v0.2.0rc1` open-source release candidate under the MIT License. Local
 > verification and Windows/Ubuntu GitHub-hosted CI are green, and Private Vulnerability Reporting
-> is enabled. A Git tag, GitHub Release, and PyPI publication are not claimed until observed.
+> is enabled. The annotated `v0.2.0rc1` tag and GitHub pre-release with wheel and source archive
+> are published; PyPI publication is not claimed.
 
 Release governance is documented in [CHANGELOG.md](CHANGELOG.md),
 [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md),
 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [CITATION.cff](CITATION.cff), and
 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md).
 
-Local release verification currently records 158 passing tests, including 47 executable BDD
-tests, zero skipped or xfailed tests, and 87.70% package coverage. The built wheel and source
+Local FR-14 verification currently records 187 passing tests, including 55 executable BDD tests,
+zero skipped or xfailed tests, and 87.40% package coverage. The published baseline wheel and source
 archive both carry version `0.2.0rc1`; the wheel includes `battery_health/py.typed`, MIT package
 metadata, and the license file. These figures are software-verification evidence, not battery
 accuracy or production BMS claims.
@@ -38,13 +39,14 @@ The next AutoBench milestones are also implemented:
   held-out test after locking
 - FR-12: build a deterministic, self-verifying evidence bundle with machine-resolvable claims
 - FR-13: approve, reject, or quarantine complete model-plugin declarations before planning
+- FR-14: import a reviewed MATR MATLAB v7.3/HDF5 batch into deterministic, hashed cycle evidence
 
 MVP decisions:
 
 - Target: SOH prediction
 - First real dataset: MATR
 - Interface: command line only
-- Current executable data: synthetic test fixtures
+- Current executable data: synthetic data fixtures plus the local-only MATR HDF5 adapter
 
 ## Development method
 
@@ -77,6 +79,25 @@ The evidence directory contains:
   limitations.
 
 The final report deliberately does not select a model from held-out test metrics.
+
+## Import a local MATR batch
+
+FR-14 reads the reviewed MATLAB v7.3/HDF5 summary structure without committing or redistributing
+the raw dataset:
+
+```powershell
+uv run battery-health import-matr --input data/raw/MATR/2017-06-30_batchdata_updated_struct_errorcorrect.mat --output data/processed/MATR/b2-import --batch-id b2 --source-url https://data.matr.io/1/api/v1/file/5c86bf13fa2ede00015ddd82/download --acquired-on 2026-08-31 --usage-terms-status public-access-research-no-redistribution-claim
+```
+
+It fail-closes on an unknown HDF5 layout, invalid or duplicate cycles, non-positive capacities,
+unsafe metadata, or an existing output directory. A successful import emits deterministic
+`cycles.csv`, `quality_report.json`, and `source_manifest.json` files with source/output SHA-256
+values and a canonical import fingerprint. See [docs/DATASETS.md](docs/DATASETS.md) for the
+reviewed source chain, local acquisition policy, format boundary, and usage caveat.
+
+The local official batch-2 smoke validation observed 48 cells and 24,920 cycle rows in 4.153
+seconds. A second import produced byte-identical CSV, quality report, and manifest files. These are
+data-integrity and reproducibility statistics, not model-accuracy measurements.
 
 ## Govern model plugins before planning
 
@@ -202,7 +223,8 @@ test metrics.
 
 ## Current limitations
 
-- The executable demo uses synthetic data; the MATR real-data adapter is not implemented.
+- The end-to-end benchmark demo remains synthetic. FR-14 imports real MATR capacity summaries but
+  does not yet connect those rows to a real-data training and validation profile.
 - Trained model serialization and loading are not implemented.
 - Finalization deterministically retrains the locked built-in model and seed because exact model
   serialization is not yet available; it does not claim byte-identical model-object reuse.

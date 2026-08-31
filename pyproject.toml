@@ -26,6 +26,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "h5py>=3.16",
     "matplotlib>=3.8",
     "numpy>=1.26",
     "pandas>=2.2",

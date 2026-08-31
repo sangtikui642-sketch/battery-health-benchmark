@@ -393,3 +393,89 @@ The failed hosted run is retained as evidence. Corrective run `33339984774` pass
 coverage, Ruff, format, mypy, and build step on Ubuntu in 4m14s and Windows in 8m24s. The repository
 was then verified public, and the Private Vulnerability Reporting API returned `enabled: true`.
 No tag, GitHub Release, or PyPI publication had been performed at this evidence checkpoint.
+
+## FR-14 MATR real-data adapter evolution
+
+The atomic requirements and eight Gherkin scenarios were written before the production module.
+The initial focused Red command was:
+
+```powershell
+uv run --frozen pytest -q tests\bdd\test_matr_data_import.py tests\test_matr_data_import_unit.py --basetemp .venv/fr14_red
+```
+
+It exited 1 during collection with two `ModuleNotFoundError` errors naming only the intentionally
+absent `battery_health.data.matr` module. Dependency resolution and fixture registration did not
+fail. The first implementation then recorded `28 passed in 3.07s`.
+
+Comparison with the author-maintained parser exposed an additional official-format detail:
+`batch/summary` references a summary group, while the group's `cycle` and `QDischarge` fields are
+themselves references to numeric datasets. Anonymous fixtures and FR14-03 were strengthened before
+the reader was changed. That second Red run recorded `17 failed, 12 passed in 3.23s`; the failures
+were confined to the missing inner dereference. The two-level reader and an explicit rejection
+test for direct, non-reference summary fields then recorded:
+
+```text
+29 passed in 2.65s
+```
+
+The focused suite comprises eight executable BDD scenarios and 21 boundary/contract cases. It
+tests stable identities, source cycle preservation, units, nested HDF5 references, invalid values,
+duplicates, deterministic bytes and fingerprints, input/output SHA-256 values, portable manifests,
+atomic failure, overwrite refusal, and CLI exit behavior. This evidence establishes the anonymous
+format contract only; it did not yet establish compatibility with the acquired corrected batch.
+
+The exact official batch then revealed a second reviewed layout: `batch/summary` remained a 48x1
+object-reference array, but every referenced summary stored `cycle` and `QDischarge` directly as
+`float64` datasets. A direct-layout anonymous fixture produced a third Red result of `8 failed, 21
+passed in 2.91s`; every failure identified the unsupported direct vector. The adapter was then
+refactored to support either a consistent direct layout or a consistent referenced-vector layout,
+record the observed mode, and reject mixed representations. Green recorded `29 passed in 2.61s`.
+
+## FR-14 official MATR batch-2 smoke validation
+
+The official 2017-06-30 corrected batch was downloaded from the recorded data.matr.io endpoint to
+ignored `data/raw/MATR/`. The endpoint-reported size and acquired bytes both measured
+2,007,331,155. The acquired SHA-256 was
+`63ab200d09ecb237fee5ef3a5c5db76e3212e3206a0bd92f769e1427fed338b8`.
+
+Read-only inspection of all summary groups observed 48 cells, 24,920 cycle/capacity pairs, direct
+numeric storage for both fields, no length mismatches, no invalid cells, and no duplicate source
+cycle indices. The documented CLI command exited 0 in 4.153 seconds:
+
+```text
+state=IMPORTED cells=48 cycles=24920 import_fingerprint=93e8dac89c310bd329de0957222ac802d542713476637d8b222e0f976bb3df05 manifest=source_manifest.json
+```
+
+Independent verification recomputed the source hash and both manifest-declared output hashes,
+confirmed 24,920 CSV rows and exact `cell_id`, `cycle_index`, `capacity_ah` columns, verified Ah and
+cycle units, and found no repository absolute path in the manifest. A second real import produced
+byte-identical CSV, quality report, and source manifest. The output SHA-256 values are recorded in
+`docs/DATASETS.md`. These are structural, integrity, and determinism observations—not model
+accuracy, generalization, license, or BMS-readiness claims.
+
+## FR-14 release validation
+
+The exact acceptance commands were rerun after the real-layout refactor and smoke evidence update:
+
+```powershell
+uv run --frozen pytest -q tests/bdd/test_matr_data_import.py tests/test_matr_data_import_unit.py --basetemp .venv/fr14_focused
+uv run --frozen pytest -q --cov=battery_health --cov-report=term-missing --cov-fail-under=85 --basetemp .venv/fr14_full
+uv run --frozen ruff check .
+uv run --frozen ruff format --check .
+uv run --frozen mypy src/battery_health
+uv build --no-sources
+git diff --check
+```
+
+Final recorded results:
+
+- focused FR-14 suite: 29 passed in 2.71 seconds;
+- full repository: 187 passed in 368.61 seconds;
+- executable BDD total: 55;
+- skipped: 0; xfailed: 0;
+- package coverage: 87.40%; `data/matr.py`: 81%; CLI: 89%;
+- Ruff lint passed and 64 files were formatted;
+- strict mypy reported no issues in 21 source files;
+- one `0.2.0rc1` wheel and one source archive built successfully;
+- `git diff --check` passed with Windows line-ending conversion warnings only;
+- raw input, normalized smoke outputs, and build products remained ignored and untracked.

@@ -23,6 +23,7 @@ from battery_health.agent.validation import (
     validate_and_lock_execution,
 )
 from battery_health.benchmark import BenchmarkError, run_benchmark
+from battery_health.data.matr import MATRImportError, import_matr_hdf5
 
 app = typer.Typer(
     help="Reproducible battery state-of-health benchmarking tools.",
@@ -76,6 +77,64 @@ def benchmark(
         typer.echo(f"Benchmark failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo("Benchmark completed. Report: benchmark_report.json")
+
+
+@app.command("import-matr")
+def import_matr(
+    input_path: Annotated[
+        Path,
+        typer.Option(
+            "--input",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Official MATR MATLAB v7.3/HDF5 batch file.",
+        ),
+    ],
+    output: Annotated[
+        Path,
+        typer.Option("--output", help="New directory for the portable import bundle."),
+    ],
+    batch_id: Annotated[
+        str,
+        typer.Option("--batch-id", help="Stable batch identity such as b2."),
+    ],
+    source_url: Annotated[
+        str,
+        typer.Option("--source-url", help="Reviewed HTTPS source URL for the exact file."),
+    ],
+    acquired_on: Annotated[
+        str,
+        typer.Option("--acquired-on", help="Acquisition date in YYYY-MM-DD form."),
+    ],
+    usage_terms_status: Annotated[
+        str,
+        typer.Option(
+            "--usage-terms-status",
+            help="Reviewed access/licensing status without an inferred redistribution grant.",
+        ),
+    ],
+) -> None:
+    """Normalize one reviewed MATR batch and emit auditable provenance."""
+
+    try:
+        result = import_matr_hdf5(
+            input_path=input_path,
+            output_dir=output,
+            batch_id=batch_id,
+            source_url=source_url,
+            acquired_on=acquired_on,
+            usage_terms_status=usage_terms_status,
+        )
+    except MATRImportError as error:
+        typer.echo(f"MATR import failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"state=IMPORTED cells={result.cell_count} cycles={result.cycle_count} "
+        f"import_fingerprint={result.import_fingerprint} "
+        f"manifest={result.source_manifest_path.name}"
+    )
 
 
 @agent_app.command("plan")

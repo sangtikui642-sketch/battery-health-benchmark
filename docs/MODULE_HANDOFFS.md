@@ -584,3 +584,94 @@ inspection, cross-platform hosted evidence, and explicit external authorization 
 The candidate should distinguish declaring compatibility from observing it, preserve frozen
 resolution, require both operating systems, and avoid marking external CI complete from local
 evidence.
+
+## FR-14 - MATR real-data adapter
+
+### Problem and product role
+
+The earlier benchmark could validate tabular data and run an auditable synthetic workflow, but it
+had no executable boundary for the first declared real dataset. FR-14 converts one user-supplied
+official MATR MATLAB v7.3/HDF5 batch into the existing minimal cycle schema while preserving
+source identity and refusing ambiguous structures. It is an ingestion module, not a model or an
+LLM advisor; the optional advisor is now FR-15.
+
+### Inputs, outputs, and safety boundary
+
+Inputs are an exact local HDF5 file plus explicit batch ID, HTTPS source URL, acquisition date, and
+reviewed usage-status text. The adapter reads only `batch/summary`, the referenced summary groups,
+and their direct or singly referenced `cycle` and `QDischarge` numeric vectors. Outputs are a new directory with
+`cycles.csv`, `quality_report.json`, and `source_manifest.json`.
+
+Raw data and generated data remain ignored. The manifest stores the portable basename, byte size,
+SHA-256, source metadata, observed structure, exact type/unit mapping, counts, output hashes,
+canonical fingerprint, and unsupported claims. It never stores a machine-specific absolute path
+or claims that public access grants redistribution permission.
+
+### Core contracts and engineering techniques
+
+- `matr_data_import.feature` defines eight observable import, rejection, reproducibility, and CLI
+  outcomes; anonymous HDF5 fixtures cover the acquired direct-vector layout, while unit fixtures
+  cover the older author-parser layout with referenced vectors.
+- `h5py` is isolated at the scientific-file boundary; its missing upstream type marker receives a
+  narrow import-only mypy suppression while repository-wide strict typing remains enabled.
+- Cycle vectors must contain finite positive integers; capacities must contain finite positive Ah
+  values; vector lengths must match; `(cell_id, cycle_index)` identities must be unique.
+- Cell IDs derive only from reviewed batch identity and stable source-array position. Source cycle
+  values are preserved and rows are sorted only for deterministic output.
+- SHA-256 is streamed in 1 MiB chunks so a multi-gigabyte source file is not loaded into memory.
+- JSON is key-sorted and the import fingerprint uses canonical compact JSON. CSV line endings and
+  float serialization are explicit.
+- All validation and input hashing precede publication. Files are written to a random sibling
+  staging directory and renamed only when complete; failure removes staging, and existing output
+  is never overwritten.
+
+### BDD Red, Green, and quantitative evidence
+
+Initial Red: two collection errors, both caused by the intentionally absent production module.
+Initial Green: 28 tests passed. Official-parser review then strengthened the fixture to two-level
+references; the resulting Red recorded 17 failures and 12 passes. The corrected focused suite
+recorded 29 passes. The acquired corrected batch then exposed its direct-vector variant: a third
+Red recorded 8 failures and 21 passes before the dual-layout Green recorded 29 passes in 2.61
+seconds. The suite consists of eight executable BDD scenarios and 21 boundary cases.
+
+The 2,007,331,155-byte official batch had SHA-256
+`63ab200d09ecb237fee5ef3a5c5db76e3212e3206a0bd92f769e1427fed338b8`. The CLI imported 48 cells
+and 24,920 rows in 4.153 seconds with fingerprint
+`93e8dac89c310bd329de0957222ac802d542713476637d8b222e0f976bb3df05`. A second real import made all
+three output files byte-identical. Raw and normalized data remained ignored and untracked.
+
+Final release-wide evidence recorded 187 tests passed in 368.61 seconds, including 55 executable
+BDD tests, zero skipped, zero xfailed, and 87.40% package coverage against the unchanged 85% gate.
+The final adapter reached 81% statement coverage and the CLI reached 89%. Ruff lint and the
+64-file format check passed; strict mypy found no issues in 21 source files; the final wheel and
+sdist built successfully; and the tracked diff contained no machine absolute path or binary data.
+
+### Known limitations and unsupported claims
+
+- FR-14 imports capacity summaries only; voltage, current, temperature, and time-series cycle data
+  are intentionally outside this first adapter.
+- Import success proves structural and value integrity, not dataset correctness, label quality,
+  battery accuracy, generalization, BMS suitability, functional safety, or cybersecurity.
+- The repository does not redistribute the MATR bytes and does not infer a dataset license.
+- Output is not yet wired into an end-to-end real-data training profile or batch-holdout study.
+- SHA-256 detects byte changes but is not a signature, trusted timestamp, or proof of authorship.
+
+### Interview explanation question
+
+> Why is a passing CSV parser insufficient evidence that the project supports the official MATR
+> dataset, and what makes this adapter's output independently auditable?
+
+A strong answer should explain MATLAB v7.3/HDF5 object references, explicit discrimination of
+direct versus referenced vectors, source-position identity, explicit units, fail-closed validation, streamed input hashing,
+deterministic serialization, portable provenance, atomic publication, and scientific/legal claim
+boundaries.
+
+### Live modification question
+
+> Add one optional voltage summary field without silently changing the current three-column
+> contract. Which atomic requirement, Gherkin scenario, HDF5 reference validator, unit declaration,
+> schema/version rule, manifest mapping, determinism assertion, and backward-compatibility test
+> must change?
+
+The candidate should make absence versus invalid presence explicit, reject ambiguous units, retain
+the current required columns, and avoid claiming support for raw per-cycle time series.

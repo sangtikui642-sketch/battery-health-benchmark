@@ -139,8 +139,9 @@ def security_and_release_authorization_are_explicit(
     assert "External actions requiring authorization" in checklist
     assert re.search(r"(?mi)^- \[x\] git commit", checklist)
     assert re.search(r"(?mi)^- \[x\] git push", checklist)
-    assert re.search(r"(?m)^- \[ \] git tag", checklist)
-    assert re.search(r"(?m)^- \[ \] GitHub Release", checklist)
+    assert re.search(r"(?mi)^- \[x\] git tag", checklist)
+    assert re.search(r"(?mi)^- \[x\] GitHub Release", checklist)
+    assert re.search(r"(?m)^- \[ \] PyPI", checklist)
 
 
 @when("the researcher builds the package and inspects both CLI help surfaces")

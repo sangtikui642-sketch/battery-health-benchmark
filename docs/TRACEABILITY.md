@@ -1,6 +1,6 @@
 # AutoBench v0.2 Traceability
 
-Status snapshot after FR-13. `complete` means the cited executable evidence exists. `not
+Status snapshot after FR-14. `complete` means the cited executable evidence exists. `not
 implemented` is deliberately not treated as completion.
 
 ## FR-11 leakage-safe selection and final validation
@@ -35,8 +35,8 @@ implemented` is deliberately not treated as completion.
 | FR12-09 | State limitations and unsupported claims for every state | Retain every outcome in a rejected run report; Report a locked run that has not been finalized | rejected and locked reporting BDD tests | `_limitations`; `_unsupported_claims`; `_render_report` | `limitations`; `unsupported_claims`; `report.md` | complete |
 | FR12-10 | Resolve every quantitative claim to hashed numeric JSON | Resolve every quantitative report claim to evidence; Detect a tampered evidence artifact through the API and CLI | claim-resolution and tamper BDD tests | `verify_evidence_bundle` | `quantitative_claims`; artifact SHA-256 table | complete |
 | FR12-11 | Complete a deterministic, offline bundle without an LLM | Generate a finalized evidence bundle without a language model; Keep evidence fingerprints deterministic across output directories | finalized and determinism reporting BDD tests | `generate_evidence_bundle`; `verify_evidence_bundle` | `generation_policy`; `evidence_fingerprint`; `report.md` | complete |
-| FR12-12 | Record provider/model/prompt/evidence when an LLM is enabled | Explain recorded evidence without changing it | deferred to FR-14 | not in current scope | advisor provenance | deferred FR-14 |
-| FR12-13 | Prevent an explanation from overwriting evidence | Explain recorded evidence without changing it | deferred to FR-14 | not in current scope | immutable deterministic evidence | deferred FR-14 |
+| FR12-12 | Record provider/model/prompt/evidence when an LLM is enabled | Explain recorded evidence without changing it | deferred to FR-15 | not in current scope | advisor provenance | deferred FR-15 |
+| FR12-13 | Prevent an explanation from overwriting evidence | Explain recorded evidence without changing it | deferred to FR-15 | not in current scope | immutable deterministic evidence | deferred FR-15 |
 
 ## FR-13 model-plugin governance
 
@@ -56,6 +56,23 @@ implemented` is deliberately not treated as completion.
 | FR13-12 | Never execute or default-enable unknown-license plugins | Quarantine a plugin with unknown license status | `test_quarantine_a_plugin_with_unknown_license_status` | `GovernancePermissions` | execution/default permissions false | complete |
 | FR13-13 | Never claim redistribution approval for unknown-license plugins | Quarantine a plugin with unknown license status | quarantine BDD and false-redistribution unit test | `GovernanceDecision.permissions_match_status` | redistribution and bundling permissions false | complete |
 
+## FR-14 MATR real-data import
+
+| ID | Atomic requirement | Gherkin scenario | Executable test | Production entry | Primary artifact | Status |
+|---|---|---|---|---|---|---|
+| FR14-01 | Require explicit reviewed source metadata | Import a valid MATR HDF5 batch | `test_import_a_valid_matr_hdf5_batch`; metadata unit cases | `_validate_metadata` | `source_manifest.json/source` | complete |
+| FR14-02 | Require the reviewed HDF5 batch/summary reference layout | Reject a missing or ambiguous MATR structure | `test_reject_a_missing_or_ambiguous_matr_structure`; non-HDF5/reference unit cases | `_read_normalized_rows` | actionable failure, no output | complete |
+| FR14-03 | Read reviewed direct or referenced cycle and QDischarge vectors | Import a valid MATR HDF5 batch | direct-vector BDD; nested-reference unit cases | `_read_vector` | `cycles.csv`; observed storage mode | complete |
+| FR14-04 | Preserve stable source cell and cycle identities | Map stable cell and cycle identities | `test_map_stable_cell_and_cycle_identities` | `_read_normalized_rows` | `cell_id`; `cycle_index` | complete |
+| FR14-05 | Declare field types, units, and exact mappings | Import a valid MATR HDF5 batch | `test_import_a_valid_matr_hdf5_batch` | `_FIELD_CONTRACT` | `source_manifest.json/field_contract` | complete |
+| FR14-06 | Reject invalid values and duplicate identities | Reject inconsistent or physically invalid summary vectors; Reject duplicate cell-cycle identities | value and duplicate BDD/unit tests | `_read_normalized_rows` | actionable failure, no output | complete |
+| FR14-07 | Produce deterministic normalized evidence | Reproduce identical normalized evidence | `test_reproduce_identical_normalized_evidence` | stable sort; canonical fingerprint | byte-identical CSV and manifest | complete |
+| FR14-08 | Hash the source and every published data artifact | Record source identity and byte hashes | `test_record_source_identity_and_byte_hashes` | `_sha256_file` | source/output SHA-256 table | complete |
+| FR14-09 | Keep provenance portable and raw data untracked | Record source identity and byte hashes | provenance BDD and portable-manifest unit test | basename-only manifest; ignore policy | `source_manifest.json` | complete |
+| FR14-10 | Publish atomically and preserve existing output | All negative scenarios | negative BDD and overwrite unit test | temporary sibling plus directory rename | absent or untouched output | complete |
+| FR14-11 | Expose actionable CLI success and failure | Import MATR through the command line | CLI BDD and failure unit test | `battery-health import-matr` | exit status and identity line | complete |
+| FR14-12 | Avoid scientific, legal, or BMS overclaiming | Record source identity and byte hashes | manifest assertions and documentation review | `unsupported_claims`; `docs/DATASETS.md` | explicit limitation list | complete |
+
 ## v0.2.0rc1 release readiness
 
 | ID | Atomic requirement | Gherkin scenario | Executable test | Release entry | Evidence | Status |
@@ -72,5 +89,5 @@ implemented` is deliberately not treated as completion.
 | REL-10 | Keep dependency and Action updates bounded | Enforce release gates on Windows and Ubuntu | pinned-action and Dependabot contracts | `.github/dependabot.yml`; CI action refs | exact ecosystems, SHAs, and hosted run | complete hosted |
 
 `complete hosted` means the requirement was observed in GitHub Actions run `33339984774` or through
-the named repository API. Tag, GitHub Release, and PyPI remain separate explicitly authorized
-release states.
+the named repository API. The annotated tag and GitHub pre-release were subsequently observed;
+PyPI remains a separate explicitly authorized release state.
